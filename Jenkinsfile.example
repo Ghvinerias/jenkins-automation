@@ -1,0 +1,29 @@
+// Example pipeline using the shared library dotnetBuild step
+@Library('jenkins-automation') _
+
+pipeline {
+  agent any
+  options { timestamps() }
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+    stage('Build .NET') {
+      steps {
+        dotnetBuild(
+          project: 'MySolution.sln',
+          configuration: 'Release',
+          restore: true,
+          test: false, // set to true to run tests
+          publish: true,
+          publishOutput: 'artifacts',
+          archive: true,
+          archivePattern: 'artifacts/**/*',
+          additionalArgs: ''
+        )
+      }
+    }
+  }
+}

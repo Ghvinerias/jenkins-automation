@@ -1,0 +1,21 @@
+@Library('jenkins-automation') _
+
+pipeline {
+  agent any
+  options { timestamps() }
+  stages {
+    stage('Build .NET') {
+      steps {
+        dotnetBuild(
+          project: 'MySolution.sln',
+          configuration: 'Release',
+          restore: true,
+          publish: true,
+          publishOutput: 'artifacts',
+          archive: true,
+          archivePattern: 'artifacts/**/*'
+        )
+      }
+    }
+  }
+}

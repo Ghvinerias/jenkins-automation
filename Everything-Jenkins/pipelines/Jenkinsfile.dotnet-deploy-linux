@@ -1,0 +1,28 @@
+@Library('jenkins-automation') _
+
+pipeline {
+  agent { label 'linux' }
+  options { timestamps() }
+  parameters {
+    string(name: 'UPSTREAM_JOB', defaultValue: '', description: 'Full path of the build job to copy artifacts from')
+    string(name: 'BUILD_NUMBER', defaultValue: 'lastSuccessfulBuild', description: 'Build number to copy from')
+    string(name: 'SERVICE_NAME', defaultValue: 'MyService', description: 'Service name under Supervisor')
+  }
+  stages {
+    stage('Fetch artifact') {
+      steps {
+        step([$class: 'CopyArtifact', projectName: params.UPSTREAM_JOB, selector: [$class: 'StatusBuildSelector', stable: false], filter: 'artifacts/**/*, **/target.zip', fingerprintArtifacts: true])
+      }
+    }
+    stage('Deploy') {
+      steps {
+        linuxDeployDotnet(
+          serviceName: params.SERVICE_NAME,
+          serviceDir: "/opt/Linux-Services/${params.SERVICE_NAME}",
+          logsDir: "/opt/Logs/Linux-Services/${params.SERVICE_NAME}",
+          artifactPattern: '**/target.zip'
+        )
+      }
+    }
+  }
+}

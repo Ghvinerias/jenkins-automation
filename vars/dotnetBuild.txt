@@ -1,0 +1,23 @@
+Build .NET projects on Linux/Windows agents and archive published artifacts.
+
+Usage:
+  dotnetBuild(
+    project: 'path/to.sln or .csproj',
+    configuration: 'Release',
+    restore: true,
+    test: false,
+    publish: true,
+    publishOutput: 'artifacts',
+    archive: true,
+    archivePattern: 'artifacts/**/*',
+    nugetConfigPath: '',
+    version: '',
+    runtime: '',
+    additionalArgs: '',
+    clean: false,
+    noRestoreOnBuild: true
+  )
+
+Notes:
+- Detects agent OS automatically and runs dotnet via sh/bat.
+- Archives artifacts only if the build succeeds.
